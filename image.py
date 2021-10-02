@@ -1,3 +1,5 @@
+from band import COGImageBand
+
 class COGImage(object):
 
     BAND_INFO_LIST = []

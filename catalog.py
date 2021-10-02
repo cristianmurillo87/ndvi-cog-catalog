@@ -1,4 +1,5 @@
 import requests
+from image import COGImage
 
 class COGCatalog(object):
 
@@ -65,7 +66,6 @@ class COGCatalog(object):
             image = self.create_image_from_feature(feature)
             self.IMAGE_LIST.append(image)
 
-
     def create_image_from_feature(self, geojson_feature={}):
-        pass
+        return COGImage(geojson_feature)
 
