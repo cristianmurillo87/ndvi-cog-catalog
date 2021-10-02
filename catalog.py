@@ -8,12 +8,12 @@ class COGCatalog(object):
     def __init__(
         self,
         limit=10,
-        collections=['sentinel-s2-l2a-cogs'],
+        collections=None,
         time_filter=None,
         bbox=None,
         aoi=None,
         query_obj=None,
-        sort_list=[]
+        sort_list=None
         ):
         """Initialize the catalog parameters"""
         
@@ -21,9 +21,9 @@ class COGCatalog(object):
         self.__bbox = bbox
         self.__datetime = time_filter
         self.__intersects = aoi
-        self.__collections = collections
+        self.__collections = collections or ['sentinel-s2-l2a-cogs']
         self.__query = query_obj
-        self.__sort = sort_list
+        self.__sort = sort_list or []
 
     def initialize(self):
         payload = self.__generate_request_payload()
@@ -62,7 +62,10 @@ class COGCatalog(object):
         self.IMAGE_LIST = []
         features = geojson.get('features', [])
         for feature in features:
-            image = self.get_image_from_feature(feature)
+            image = self.create_image_from_feature(feature)
             self.IMAGE_LIST.append(image)
 
+
+    def create_image_from_feature(self, geojson_feature={}):
+        pass
 
