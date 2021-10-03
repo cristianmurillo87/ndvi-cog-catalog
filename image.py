@@ -87,8 +87,7 @@ class COGImage(object):
                 'title': asset_value.get('title'),
                 'url': asset_value.get('href'),
                 'pixel_size': asset_value.get('gsd'),
-                'shape': asset_value.get('proj:shape'),
-                'transform': asset_value.get('proj:transform')
+                'crs': 'EPSG:{}'.format(self.__crs) if self.__crs else None
             }
 
             if len(band_info) > 0:
