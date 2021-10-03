@@ -1,5 +1,13 @@
 from band import COGImageBand
 
+class BandNotFoundException(Exception):
+    def __init__(self, band_name=None, message=None):
+        if message:
+            self.message = message
+        if band_name:
+            self.message = 'No band name {} was found'.format(band_name)
+
+
 class COGImage(object):
 
     BAND_INFO_LIST = []
@@ -98,8 +106,13 @@ class COGImage(object):
 
             self.BAND_INFO_LIST.append(new_band_obj)
 
-    def get_band(self, band_name):
+    def get_band_by_name(self, band_name):
         for band in self.BAND_INFO_LIST:
             if band.get('name') == band_name:
                 return COGImageBand(**band)
-        return None
+        raise BandNotFoundException(band_name=band_name)
+
+    def get_band_by_index(self, index):
+        if len(self.BAND_INFO_LIST) >= index + 1:
+            return self.BAND_INFO_LIST[index]
+        raise BandNotFoundException(message='Invalid index')
