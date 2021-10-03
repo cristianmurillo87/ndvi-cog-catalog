@@ -1,5 +1,5 @@
 import requests
-import rasterio
+import rasterio as rio
 import numpy as np
 
 class COGImageBand(object):
@@ -120,7 +120,7 @@ class COGImageBand(object):
             self.__BAND_DATA = band_data
         else:
             if self.url:
-                with rasterio.open(self.url) as band:
+                with rio.open(self.url) as band:
                     self.__BAND_DATA = band.read(1)
                     self.__band_bounds = band.bounds
                     self.__brand_crs = band.crs
