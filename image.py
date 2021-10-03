@@ -74,7 +74,7 @@ class COGImage(object):
 
     @property
     def bands(self):
-        return map(lambda band: band.get('name'), self.BAND_INFO_LIST)
+        return map(lambda band: dict(name=band.get('name'), title=band.get('title')), self.BAND_INFO_LIST)
 
     def update_band_list(self, feature_assets_obj={}):
         self.BAND_INFO_LIST = []
@@ -98,7 +98,7 @@ class COGImage(object):
 
             self.BAND_INFO_LIST.append(new_band_obj)
 
-    def get_band_by_name(self, band_name):
+    def get_band(self, band_name):
         for band in self.BAND_INFO_LIST:
             if band.get('name') == band_name:
                 return COGImageBand(**band)
