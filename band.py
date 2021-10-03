@@ -97,6 +97,12 @@ class COGImageBand(object):
             return np.mean(self.__BAND_DATA, dtype=np.float64)
         return None
 
+    @property(self):
+    def median(self):
+        if self.__BAND_DATA:
+            return np.median(self.__BAND_DATA)
+        return None
+
     @property
     def std(self):
         if self.__BAND_DATA:
