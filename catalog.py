@@ -3,8 +3,8 @@ from image import COGImage
 
 class COGCatalog(object):
 
-    CATALOG_URL = 'https://earth-search.aws.element84.com/v0/search'
-    IMAGE_LIST = []
+    __CATALOG_URL = 'https://earth-search.aws.element84.com/v0/search'
+    __IMAGE_LIST = []
 
     def __init__(
         self,
@@ -23,7 +23,7 @@ class COGCatalog(object):
     def initialize(self):
         payload = self.__generate_request_payload()
         try:
-            response = requests.post(self.CATALOG_URL, data=payload)
+            response = requests.post(self.__CATALOG_URL, data=payload)
             json_response = response.json()
             if json_response:
                 self.__update_image_list(json_response)
@@ -54,11 +54,11 @@ class COGCatalog(object):
             payload['sort'] = self.__sort
 
     def __update_image_list(self, geojson):
-        self.IMAGE_LIST = []
+        self.__IMAGE_LIST = []
         features = geojson.get('features', [])
         for feature in features:
             image = self.__create_image_from_feature(feature)
-            self.IMAGE_LIST.append(image)
+            self.__IMAGE_LIST.append(image)
 
     def __create_image_from_feature(self, geojson_feature={}):
         return COGImage(geojson_feature)
@@ -83,18 +83,18 @@ class COGCatalog(object):
         self.initialize()
 
     def get_image_by_id(self, image_id):
-        matches = filter(lambda img: img.id == image_id, self.IMAGE_LIST)
+        matches = filter(lambda img: img.id == image_id, self.__IMAGE_LIST)
         return matches[0] if len(matches) > 0 else None
 
     def get_image_by_product_id(self, product_id):
-        matches = filter(lambda img: img.product_id == product_id, self.IMAGE_LIST)
+        matches = filter(lambda img: img.product_id == product_id, self.__IMAGE_LIST)
         return matches[0] if len(matches) > 0 else None
 
     def get_images_by_collection(self, collection_name):
-        return filter(lambda img: img.collection == collection_name, self.IMAGE_LIST)
+        return filter(lambda img: img.collection == collection_name, self.__IMAGE_LIST)
 
     def get_images_by_platform(self, platform):
-        return filter(lambda img: img.platform == platform, self.IMAGE_LIST)
+        return filter(lambda img: img.platform == platform, self.__IMAGE_LIST)
     
     def get_images_by_platform(self, constellation):
-        return filter(lambda img: img.constellation == constellation, self.IMAGE_LIST)
+        return filter(lambda img: img.constellation == constellation, self.__IMAGE_LIST)
