@@ -82,6 +82,11 @@ class COGCatalog(object):
         self.__sort = sort_list or []
         self.initialize()
 
+    def get_image_at(self, index):
+        if len(self.__IMAGE_LIST) >= index + 1:
+            return self.__IMAGE_LIST[index]
+        return None
+        
     def get_image_by_id(self, image_id):
         matches = filter(lambda img: img.id == image_id, self.__IMAGE_LIST)
         return matches[0] if len(matches) > 0 else None
