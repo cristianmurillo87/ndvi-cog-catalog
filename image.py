@@ -85,7 +85,6 @@ class COGImage(object):
             band_info = asset_value.get('eo:bands', [])
             new_band_obj = {
                 'title': asset_value.get('title'),
-                'type': asset_value.get(''),
                 'url': asset_value.get('href'),
                 'pixel_size': asset_value.get('gsd'),
                 'shape': asset_value.get('proj:shape'),
