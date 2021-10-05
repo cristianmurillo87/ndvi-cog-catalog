@@ -9,8 +9,9 @@ class COGImageBand(object):
         self,
         title='',
         name='',
+        common_name=None,
         url=None,
-        band_data=None
+        band_data=None,
         pixel_size=None,
         crs=None,
         bounds=None,
@@ -19,13 +20,14 @@ class COGImageBand(object):
     ):
         self.__band_title = title
         self.__band_name = name
+        self.__band_common_name = common_name
         self.__band_url = url
-        self.__band_shape = pixel_size
-        self.__band_crs = crs
+        self.__band_pixel_size = pixel_size
+        self.__brand_crs = crs
         self.__band_bounds = bounds,
         self.__band_center_wavelength = center_wavelength
         self.__band_full_width_half_max = full_width_half_max
-        self.init_band_data()
+        self.init_band_data(band_data)
 
     @property
     def title(self):
@@ -34,6 +36,10 @@ class COGImageBand(object):
     @property
     def name(self):
         return self.__band_name
+
+    @property
+    def common_name(self):
+        return self.__band_common_name
 
     @property
     def url(self):
@@ -45,25 +51,19 @@ class COGImageBand(object):
 
     @property
     def width(self):
-        if self.__BAND_DATA:
-            return self.__BAND_DATA.shape[1]
-        return None
+        return self.__BAND_DATA.shape[1] if self.is_valid() else None
 
     @property
     def height(self):
-        if self.__BAND_DATA:
-            return self.__BAND_DATA.shape[0]
-        return None
+        return self.__BAND_DATA.shape[0] if self.is_valid() else None
 
     @property
     def size(self):
-        if self.__BAND_DATA:
-            return self.__BAND_DATA.size
-        return None
+        return self.__BAND_DATA.size if self.is_valid() else None
 
-    @property(self):
+    @property
     def crs(self):
-        return self.__band_crs
+        return self.__brand_crs
 
     @property
     def bounds(self):
@@ -71,13 +71,15 @@ class COGImageBand(object):
     
     @property
     def type(self):
-        if self.__BAND_DATA:
-            return self.__BAND_DATA.dtype
-        return None
+        return self.__BAND_DATA.dtype if self.is_valid() else None
     
     @property
     def transform(self):
         return self.__band_transform
+
+    @property
+    def pixel_size(self):
+        return self.__band_pixel_size
 
     @property
     def center_wavelength(self):
@@ -91,30 +93,33 @@ class COGImageBand(object):
     def data(self):
         return self.__BAND_DATA
 
-    @property(self):
+    @property
     def mean(self):
-        if self.__BAND_DATA:
-            return np.mean(self.__BAND_DATA, dtype=np.float64)
-        return None
+        return np.nanmean(self.__BAND_DATA, dtype=np.float64) if self.is_valid() else None
 
-    @property(self):
+    @property
+    def min(self):
+        return np.nanmin(self.__BAND_DATA) if self.is_valid() else None
+    
+    @property
+    def max(self):
+        return np.nanmax(self.__BAND_DATA) if self.is_valid() else None
+
+    @property
     def median(self):
-        if self.__BAND_DATA:
-            return np.median(self.__BAND_DATA)
-        return None
+        return np.nanmedian(self.__BAND_DATA) if self.is_valid() else None
 
     @property
     def std(self):
-        if self.__BAND_DATA:
-            return np.std(self.__BAND_DATA, dtype=np.float64)
-        return None
+        return np.nanstd(self.__BAND_DATA, dtype=np.float64) if self.is_valid() else None
 
     @property
     def variance(self):
-        if self.__BAND_DATA:
-            return np.var(self.__BAND_DATA, dtype=np.float64)
-        return None
-    
+        return np.nanvar(self.__BAND_DATA, dtype=np.float64) if self.is_valid() else None
+
+    def is_valid(self):
+        return isinstance(self.__BAND_DATA, np.ndarray)
+
     def init_band_data(self, band_data):
         if isinstance(band_data, np.ndarray):
             self.__BAND_DATA = band_data
@@ -126,6 +131,6 @@ class COGImageBand(object):
                     self.__brand_crs = band.crs
                     self.__band_transform  = band.transform
 
-    def set_transform(transform):
+    def set_transform(self, transform):
         self.__band_transform = transform
 
