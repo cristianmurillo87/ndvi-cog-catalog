@@ -58,16 +58,6 @@ class NDVICalculator(object):
         )
         return ndvi
 
-    def plot_ndvi(self):
-        if self.ndvi:
-            plt.imshow(self.ndvi.data)
-            plt.colorbar()
-            plt.title('NDVI (mean {})'.format(self.ndvi.mean))
-            plt.xlabel('Row')
-            plt.ylabel('Column')
-        else:
-            print('Statistics Summary:\nNo NDVI has yet been calculated')
-
     def summary(self):
         if self.ndvi:
             print('Statistics summary:\nMin: {:.4f}\tMax: {:.4f}\n Mean: {:.4f}\tMedian: {:.4f}\nStd. Dev: {:.4f}\tVariance:{:.4f}'.format(
