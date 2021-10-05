@@ -1,5 +1,7 @@
 requests
 numpy
 scipy
+boto3
 rasterio
 matplotlib
+click
