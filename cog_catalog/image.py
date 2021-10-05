@@ -1,5 +1,5 @@
-from band import COGImageBand
-
+from cog_catalog.band import COGImageBand
+import json
 class BandNotFoundException(Exception):
     def __init__(self, band_name=None, message=None):
         if message:
@@ -82,11 +82,12 @@ class COGImage(object):
 
     @property
     def bands(self):
-        return map(lambda band: dict(name=band.get('name'), title=band.get('title')), self.BAND_INFO_LIST)
+        return list(map(lambda band: dict(name=band.get('name'), title=band.get('title')), self.BAND_INFO_LIST))
 
     def update_band_list(self, feature_assets_obj={}):
         self.BAND_INFO_LIST = []
-        for asset_key, asset_value in feature_assets_obj.keys():
+        for asset_key, asset_value in feature_assets_obj.items():
+
             if asset_key in ('thumbnail', 'overview', 'info', 'metadata', 'visual'):
                 continue
             
@@ -103,12 +104,14 @@ class COGImage(object):
                 new_band_obj['center_wavelength'] = band_properties.get('center_wavelength')
                 new_band_obj['full_width_half_max'] = band_properties.get('full_width_half_max')
                 new_band_obj['name'] = band_properties.get('name')
+                new_band_obj['common_name'] = band_properties.get('common_name')
 
-            self.BAND_INFO_LIST.append(new_band_obj)
+            if new_band_obj.get('name'):
+                self.BAND_INFO_LIST.append(new_band_obj)
 
     def get_band_by_name(self, band_name):
         for band in self.BAND_INFO_LIST:
-            if band.get('name') == band_name:
+            if band.get('name') == band_name or band.get('common_name') == band_name:
                 return COGImageBand(**band)
         raise BandNotFoundException(band_name=band_name)
 
