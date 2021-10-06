@@ -1,7 +1,7 @@
 ### NDVI Calculator for COG
 
 This project aims to provide to an interface that allows calculating the NDVI for satellite image scenes
-obtained through the Element84 API. It can be used either as a Python script or as a command line interface (CLI). Both options 
+obtained through the [Element84 API](https://www.element84.com/earth-search/). It can be used either as a Python script or as a command line interface (CLI). Both options 
 to filter which scenes from the API; the only difference being that when used as a CLI, the result
 is restricted to a single image whereas using the script variant, the user has more control over which 
 results are retrieved.
