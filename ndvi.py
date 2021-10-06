@@ -1,8 +1,13 @@
+"""
+Basic command-line utility to calculate NDVI for a sentinel-2 scene
+"""
 import click
 from cog_catalog.catalog import COGCatalog
 from cog_catalog.calculator import NDVICalculator
 
-
+operation_help = """Determines what value should be printed after calculating the NDVI. The possible values are:
+                 mean, median, std, var, min, max, summary
+                 """
 @click.command()
 @click.option('--time_range', '-t',
               default='latest',
@@ -23,42 +28,46 @@ from cog_catalog.calculator import NDVICalculator
               default='mean',
               type=str,
               nargs=1,
-              help='Determines what value should be printed after calculating the NDVI')
+              help=operation_help)
 def calculate_ndvi(time_range, geojson, red_band, nir_band, operation):
     try:
-        time_filter = time_range if time_range != 'latest' else None
-        sort_list = [dict(field='datetime', direction='desc'), dict(field='date', direction='desc')] if time_filter \
-            else None
-        sentinel_cog_catalog = COGCatalog(
-                                    limit=1,
-                                    collections=['sentinel-s2-l2a-cogs'],
-                                    aoi=geojson,
-                                    time_filter=time_filter,
-                                    sort_list=sort_list
-        )
-        image = sentinel_cog_catalog.get_image_at(0)
+        if operation not in ('summary', 'mean', 'median', 'max', 'min', 'std', 'var'):
+            print('Invalid operation. Please provide a valid value')
+            return
+        else:
+            time_filter = time_range if time_range != 'latest' else None
+            sort_list = [dict(field='datetime', direction='desc'), dict(field='date', direction='desc')] if time_filter \
+                else None
+            sentinel_cog_catalog = COGCatalog(
+                                        limit=1,
+                                        collections=['sentinel-s2-l2a-cogs'],
+                                        aoi=geojson,
+                                        time_filter=time_filter,
+                                        sort_list=sort_list
+            )
+            image = sentinel_cog_catalog.get_image_at(0)
 
-        if image:
-            print('=' * 60)
-            template = 'Image Information\nID: {}\nPlatform: {}\nCollection: {}\nDate: {}\nCloud Cover: {}%'
-            print(template.format(image.id, image.platform, image.collection, image.datetime, image.cloud_cover))
-            print('='*60)
-            ndvi_calculator = NDVICalculator(image=image, red_band_name=red_band, nir_band_name=nir_band)
-            ndvi = ndvi_calculator.ndvi
-            if operation == 'mean':
-                print('Mean NDVI: {:.4f}'.format(ndvi.mean))
-            elif operation == 'median':
-                print('Median NDVI: {:.4f}'.format(ndvi.median))
-            elif operation == 'min':
-                print('Minimum NDVI value: {:.4f}'.format(ndvi.min))
-            elif operation == 'max':
-                print('Maximum NDVI value: {:.4f}'.format(ndvi.max))
-            elif operation == 'std':
-                print('Standard Deviation of the calculated NDVI: {:.4f}'.format(ndvi.std))
-            elif operation == 'var':
-                print('Variance of the calculated NDVI: {:.4f}'.format(ndvi.variance))
-            else:
-                ndvi_calculator.summary()
+            if image:
+                print('=' * 60)
+                template = 'Image Information\nID: {}\nPlatform: {}\nCollection: {}\nDate: {}\n'
+                print(template.format(image.id, image.platform, image.collection, image.datetime))
+                print('='*60)
+                ndvi_calculator = NDVICalculator(image=image, red_band_name=red_band, nir_band_name=nir_band)
+                ndvi = ndvi_calculator.ndvi
+                if operation == 'mean':
+                    print('Mean NDVI: {:.4f}'.format(ndvi.mean))
+                elif operation == 'median':
+                    print('Median NDVI: {:.4f}'.format(ndvi.median))
+                elif operation == 'min':
+                    print('Minimum NDVI value: {:.4f}'.format(ndvi.min))
+                elif operation == 'max':
+                    print('Maximum NDVI value: {:.4f}'.format(ndvi.max))
+                elif operation == 'std':
+                    print('Standard Deviation of the calculated NDVI: {:.4f}'.format(ndvi.std))
+                elif operation == 'var':
+                    print('Variance of the calculated NDVI: {:.4f}'.format(ndvi.variance))
+                elif operation == 'summary':
+                    ndvi_calculator.summary()
     except Exception:
         print('Error occured while trying to calculate the NDVI. Please check the arguments given in the command line')
 
