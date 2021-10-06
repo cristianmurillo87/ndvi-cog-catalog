@@ -1,7 +1,7 @@
 """
 A class holding both the metadata and the image values of a COG.
 """
-import rasterio as rio
+import rasterio
 import numpy as np
 
 from pathlib import Path
@@ -20,7 +20,7 @@ class COGImageBand(object):
             title: str = '',
             name: str = '',
             common_name: Optional[str]= None,
-            url: Optional[Path, str] = None,
+            url: Optional[Union[Path, str]] = None,
             band_data: Optional[np.ndarray]= None,
             pixel_size: Optional[int] = None,
             crs: Optional[str] = None,
@@ -144,7 +144,7 @@ class COGImageBand(object):
         return self.__BAND_DATA.dtype if self.is_valid() else None
 
     @property
-    def transform(self) -> rio.Affine:
+    def transform(self) -> rasterio.Affine:
         """
         Returns:
             The transformation parameters
@@ -248,13 +248,13 @@ class COGImageBand(object):
             self.__band_url = None
         else:
             if self.url:
-                with rio.open(self.url) as band:
+                with rasterio.open(self.url) as band:
                     self.__BAND_DATA = band.read(1)
                     self.__band_bounds = band.bounds
                     self.__brand_crs = band.crs
                     self.__band_transform = band.transform
 
-    def set_transform(self, transform: rio.Affine):
+    def set_transform(self, transform: rasterio.Affine):
         """
         Sets the image's transform
 
