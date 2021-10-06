@@ -135,3 +135,11 @@ The purpose was originally to print only the mean NDVI. But since the mean is so
 using it alone might lead to erroneous assumptions regarding the meaning of the obtained result. Therefore it was decided
 to provide additional statistical measurements like the median (which is not as affected by such atypical values as the mean),
 standard deviation, variance, minimum and maximum  so that a better understanding of the NDVI values distribution can be obtained.
+
+
+### Testing
+For this purpose, the `unittest` package was used. The test files are localed inside the `tests` folder. Here an example of how to run a them:
+
+```bash
+python tests/test_band.py
+```
